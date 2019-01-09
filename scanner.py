@@ -22,16 +22,19 @@ def rotate(deg):
 	rotating_motor.turn(speed, abs(deg))
 
 def get_x():
-	deg = driving_motor.get_tacho().rotation_count
-	return deg / DEG_PER_CM
+	return math.sin(math.radians(__get_deg())) * ARM_LENGTH
 
 def get_y():
-	deg = rotating_motor.get_tacho().rotation_count
-	deg /= DEG_PER_REAL_DEG
-	return math.sin(math.radians(deg)) * ARM_LENGTH
+	rot = -driving_motor.get_tacho().rotation_count
+	dist = rot / DEG_PER_CM
+	dist += math.cos(math.radians(__get_deg())) * ARM_LENGTH
+	return dist
+
+def __get_deg():
+	return rotating_motor.get_tacho().rotation_count / DEG_PER_REAL_DEG
 
 def get_light():
-	return light_sensor.get_sample()
+	return light_sensor.get_sample() / 1000.
 
 brick = nxt.locator.find_one_brick()
 light_sensor = Light(brick, PORT_1)
